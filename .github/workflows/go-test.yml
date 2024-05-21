@@ -10,7 +10,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -25,5 +24,23 @@ jobs:
     - name: Install dependencies
       run: go mod tidy
 
-    - name: Run tests
-      run: go test ./...
+    - name: Install go-junit-report
+      run: go install github.com/jstemmer/go-junit-report@latest
+
+    - name: Install junit-viewer
+      run: npm install -g junit-viewer
+
+    - name: Run tests and generate report
+      run: |
+        mkdir -p test-reports
+        go test -v ./... | go-junit-report > test-reports/report.xml
+
+    - name: Generate HTML report
+      run: |
+        junit-viewer --results=test-reports/report.xml --save=test-reports/report.html
+
+    - name: Upload test report
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-report
+        path: test-reports/report.html
