@@ -26,8 +26,28 @@ jobs:
       - name: Install dependencies
         run: go mod tidy
 
-      - name: Run tests
-        run: go test ./...
+      - name: Install go-junit-report
+        run: go install github.com/jstemmer/go-junit-report@latest
+
+      - name: Run tests and generate JUnit report
+        run: |
+          mkdir -p reports
+          go test -v 2>&1 | go-junit-report > reports/junit.xml
+
+      - name: Install Python and junit2html
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - run: pip install junit2html
+
+      - name: Convert JUnit report to HTML
+        run: junit2html reports/junit.xml reports/test-report.html
+
+      - name: Upload test report artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-report
+          path: reports/test-report.html
 
       - name: Run linter
         run: |
