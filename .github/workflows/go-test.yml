@@ -63,6 +63,6 @@ jobs:
         run: |
           TOKEN="${SLACK_API_TOKEN}"
           REPORT_FILE="reports/test-report.html"
-          CHANNEL_ID="D0662HPPER4"  # Cambia esto al ID del canal de Slack al que deseas enviar el archivo
+          CHANNEL_ID="C06SKBT3ZU5"  # Cambia esto al ID del canal de Slack al que deseas enviar el archivo
 
           curl -F "token=$TOKEN" -F "channels=$CHANNEL_ID" -F "file=@$REPORT_FILE" -F "title=Test Report" https://slack.com/api/files.upload
