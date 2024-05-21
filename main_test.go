@@ -10,4 +10,4 @@ func TestAdd(t *testing.T) {
     if result != expected {
         t.Errorf("Add(2, 3) = %d; want %d", result, expected)
     }
-}
+
