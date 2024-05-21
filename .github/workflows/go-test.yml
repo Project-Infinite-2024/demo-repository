@@ -4,43 +4,27 @@ on:
   push:
     branches:
       - main
+      - master
   pull_request:
     branches:
       - main
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: '1.18'
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.17'
 
-    - name: Install dependencies
-      run: go mod tidy
+      - name: Install dependencies
+        run: go mod download
 
-    - name: Install go-junit-report
-      run: go install github.com/jstemmer/go-junit-report@latest
-
-    - name: Install junit-viewer
-      run: npm install -g junit-viewer
-
-    - name: Run tests and generate report
-      run: |
-        mkdir -p test-reports
-        go test -v ./... | go-junit-report > test-reports/report.xml
-
-    - name: Generate HTML report
-      run: |
-        junit-viewer --results=test-reports/report.xml --save=test-reports/report.html
-
-    - name: Upload test report
-      uses: actions/upload-artifact@v2
-      with:
-        name: test-report
-        path: test-reports/report.html
+      - name: Run tests
+        run: go test ./...
