@@ -44,6 +44,7 @@ jobs:
         run: junit2html reports/junit.xml reports/test-report.html
 
       - name: Upload test report artifact
+        if: always() 
         uses: actions/upload-artifact@v2
         with:
           name: test-report
@@ -58,6 +59,7 @@ jobs:
         run: go vet ./...
 
       - name: Send report to Slack
+        if: always() 
         env:
           SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
         run: |
