@@ -54,6 +54,7 @@ jobs:
         run: |
           go install golang.org/x/lint/golint@latest
           golint ./...
+          ||
 
       - name: Run static analysis
         run: go vet ./...
