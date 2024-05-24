@@ -64,5 +64,5 @@ jobs:
         run: |
           TOKEN="${SLACK_API_TOKEN}"
           REPORT_FILE="reports/test-report.html"
-          CHANNEL_ID="C072KA9KKPD"  
+          CHANNEL_ID="C075QF1PX7A"  
           curl -F "token=$TOKEN" -F "channels=$CHANNEL_ID" -F "file=@$REPORT_FILE" -F "title=Test Report" https://slack.com/api/files.upload
