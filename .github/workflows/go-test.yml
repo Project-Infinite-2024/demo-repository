@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - master
-      - develop
   pull_request:
     branches:
       - main
@@ -33,7 +32,7 @@ jobs:
       - name: Run tests and generate JUnit report
         run: |
           mkdir -p reports
-          go test -v 2>&1 | tee reports/test-output.txt | go-junit-report > reports/junit.xml
+          go test -v 2>&1 | go-junit-report > reports/junit.xml
       - name: Install Python and junit2html
         uses: actions/setup-python@v2
         with:
@@ -43,27 +42,27 @@ jobs:
       - name: Convert JUnit report to HTML
         run: junit2html reports/junit.xml reports/test-report.html
 
+      - name: Upload test report artifact
+        if: always() 
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-report
+          path: reports/test-report.html
+
       - name: Run linter
         run: |
           go install golang.org/x/lint/golint@latest
-          golint ./... 2>&1 | tee -a reports/test-output.txt
-
+          golint ./... 
+          
       - name: Run static analysis
-        run: go vet ./... 2>&1 | tee -a reports/test-output.txt
+        run: go vet ./...
 
-      - name: Filter and send errors to Slack
+      - name: Send report to Slack
         if: always() 
         env:
           SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
         run: |
           TOKEN="${SLACK_API_TOKEN}"
-          ERROR_LOG="reports/test-output.txt"
-          FILTERED_ERROR_LOG="reports/filtered-errors.txt"
-          CHANNEL_ID="C072KA9KKPD"  # Cambia esto al ID del canal de Slack al que deseas enviar el archivo
-          
-          # Filtrar errores
-          grep -E '(ERROR|FATAL)' "$ERROR_LOG" > "$FILTERED_ERROR_LOG"
-          
-          # Enviar errores a Slack junto con un mensaje
-          MESSAGE="Se encontraron errores durante la ejecución del pipeline. Revisa el archivo adjunto para más detalles."
-          curl -F "token=$TOKEN" -F "channels=$CHANNEL_ID" -F "file=@$FILTERED_ERROR_LOG" -F "initial_comment=$MESSAGE" -F "title=Error Log" https://slack.com/api/files.upload
+          REPORT_FILE="reports/test-report.html"
+          CHANNEL_ID="C06SKBT3ZU5"  
+          curl -F "token=$TOKEN" -F "channels=$CHANNEL_ID" -F "file=@$REPORT_FILE" -F "title=Test Report" https://slack.com/api/files.upload
