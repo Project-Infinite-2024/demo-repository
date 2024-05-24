@@ -59,7 +59,7 @@ jobs:
           TOKEN="${SLACK_API_TOKEN}"
           ERROR_LOG="reports/test-output.txt"
           FILTERED_ERROR_LOG="reports/filtered-errors.txt"
-          CHANNEL_ID="C06SKBT3ZU5"  # Cambia esto al ID del canal de Slack al que deseas enviar el archivo
+          CHANNEL_ID="C072KA9KKPD"  # Cambia esto al ID del canal de Slack al que deseas enviar el archivo
           
           # Filtrar errores
           grep -E '(ERROR|FATAL)' "$ERROR_LOG" > "$FILTERED_ERROR_LOG"
